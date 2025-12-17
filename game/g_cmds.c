@@ -1115,11 +1115,15 @@ void Cmd_PsychicWarp(edict_t* ent) {
 		{
 			vec3_t temp_position;
 			VectorCopy(ent->s.origin, temp_position);
-			if (ent->client->teleport_position[0] != 0 || ent->client->teleport_position[1] != 0 || ent->client->teleport_position[2] != 0)
+			if ((ent->client->teleport_position[0] != 0) || (ent->client->teleport_position[1] != 0) || (ent->client->teleport_position[2] != 0))
 			{
 				VectorCopy(ent->client->teleport_position, ent->s.origin);
 				VectorCopy(temp_position, ent->client->teleport_position);
 				ent->client->psychic_power -= cost;
+			}
+			else 
+			{
+				VectorCopy(temp_position, ent->client->teleport_position);
 			}
 		}
 	}
@@ -1161,6 +1165,52 @@ void Cmd_PsychicFloat(edict_t* ent) {
 		}
 	}
 
+}
+
+void Cmd_PsychicHeal(edict_t* ent) {
+	if (ent->client != NULL) {
+		int cost = 500;
+		if (ent->client->psychic_power >= cost && ent->health < ent->max_health) {
+			ent->health += 50;
+			if (ent->health > ent->max_health) {
+				ent->health = ent->max_health;
+			}
+			ent->client->psychic_power -= cost;
+			gi.sound(ent, CHAN_ITEM, gi.soundindex("items/n_health.wav"), 1, ATTN_NORM, 0);
+		}
+	}
+}
+
+void Cmd_PsychicHold(edict_t* ent) {
+	int cost = 400;
+	if (ent->client->psychic_power >= cost)
+	{
+		vec3_t	start;
+		vec3_t	forward, right, up;
+		vec3_t	aim;
+		vec3_t	dir;
+		vec3_t	end;
+
+		//vectoangles(ent->owner->client->v_angle, dir);
+		if (ent->client == NULL) {
+			//gi.cprintf(ent, PRINT_HIGH, "Entity is not a client");
+		}
+		else {
+			//gi.cprintf(ent, PRINT_HIGH, "Entity is a client");
+			AngleVectors(ent->client->v_angle, forward, right, up);
+			vec3_t offset;
+			VectorSet(offset, 24, 6, ent->viewheight - 7);
+			G_ProjectSource(ent->s.origin, offset, forward, right, start);
+			VectorMA(start, 8192, forward, end);
+			trace_t tr;
+			tr = gi.trace(start, NULL, NULL, end, ent, MASK_SHOT);
+			if (tr.ent->takedamage) {
+				ent->client->held_item = tr.ent;
+				VectorCopy(tr.ent->s.origin, ent->client->held_item_position);
+				ent->client->held_item_timer = 300;
+			}
+		}
+	}
 }
 
 
@@ -1270,6 +1320,10 @@ void ClientCommand (edict_t *ent)
 		Cmd_PsychicWarp(ent);
 	else if (Q_stricmp(cmd, "psychicfloat") == 0)
 		Cmd_PsychicFloat(ent);
+	else if (Q_stricmp(cmd, "psychicheal") == 0)
+		Cmd_PsychicHeal(ent);
+	else if (Q_stricmp(cmd, "psychichold") == 0)
+		Cmd_PsychicHold(ent);
 	//psychicantigrav is currently unused
 	else if (Q_stricmp(cmd, "psychicantigrav") == 0)
 		Cmd_PsychicAntiGrav(ent);

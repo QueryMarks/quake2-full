@@ -1756,6 +1756,17 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		ent->velocity[2] = 30;
 		client->floating -= 1;
 	}
+
+	//psychic hold
+	if (client->held_item != NULL) {
+		if (client->held_item_timer > 0) {
+			VectorCopy(client->held_item_position, client->held_item->s.origin);
+			client->held_item_timer -= 1;
+		}
+		else {
+			client->held_item_timer -= 1;
+		}
+	}
 	//ETHELYN END
 }
 

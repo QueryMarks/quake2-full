@@ -964,6 +964,10 @@ struct gclient_s
 	vec3_t      teleport_position;
 	int         psychic_power;
 	int        floating;
+
+	edict_t* held_item;
+	int held_item_timer;
+	vec3_t held_item_position;
 	//ETHELYN END
 };
 
