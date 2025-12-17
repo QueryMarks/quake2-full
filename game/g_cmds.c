@@ -910,167 +910,259 @@ void Cmd_TeleportBeam_f(edict_t* ent)
 	vec3_t	dir;
 	vec3_t	end;
 
-	AngleVectors(ent->client->v_angle, forward, right, up);
-	vec3_t offset;
-	VectorSet(offset, 24, 6, ent->viewheight - 7);
-	G_ProjectSource(ent->s.origin, offset, forward, right, start);
-	VectorMA(start, 8192, forward, end);
-	trace_t tr;
-	tr = gi.trace(start, NULL, NULL, end, ent, MASK_SHOT);
-	if (tr.ent->takedamage) {
-		gi.cprintf(ent, PRINT_HIGH, "IT TOOK DAMAGE\n");
-		vec3_t temppos;
-		VectorCopy(tr.ent->s.origin, temppos);
-		VectorCopy(ent->s.origin, tr.ent->s.origin);
-		VectorCopy(temppos, ent->s.origin);
-	}
+	int cost = 500;
 
+	if (ent->client->psychic_power >= cost)
+	{
+		AngleVectors(ent->client->v_angle, forward, right, up);
+		vec3_t offset;
+		VectorSet(offset, 24, 6, ent->viewheight - 7);
+		G_ProjectSource(ent->s.origin, offset, forward, right, start);
+		VectorMA(start, 8192, forward, end);
+		trace_t tr;
+		tr = gi.trace(start, NULL, NULL, end, ent, MASK_SHOT);
+		if (tr.ent->takedamage) {
+			gi.cprintf(ent, PRINT_HIGH, "IT TOOK DAMAGE\n");
+			vec3_t temppos;
+			VectorCopy(tr.ent->s.origin, temppos);
+			VectorCopy(ent->s.origin, tr.ent->s.origin);
+			VectorCopy(temppos, ent->s.origin);
+			ent->client->psychic_power -= cost;
+		}
+	}
 }
 
 void Cmd_Superjump(edict_t* ent) {
-	ent->velocity[2] = 500;
+	int cost = 200;
+
+	if (ent->client->psychic_power >= cost)
+	{
+		ent->velocity[2] = 500;
+		ent->client->psychic_power -= cost;
+	}
 }
 
-void Cmd_PsychicDash(edict_t* ent) {
-	vec3_t	start;
-	vec3_t	forward, right, up;
-	vec3_t	aim;
-	vec3_t	dir;
-	vec3_t	end;
+void Cmd_PsychicDash(edict_t* ent) {	
+	int cost = 200;
 
-	AngleVectors(ent->client->v_angle, forward, right, up);
-	gi.cprintf(ent, PRINT_HIGH, "Forward is %d %d %d", forward);
-	vec3_t forward2;
-	VectorMA(forward2, 200, forward, forward2);
-	VectorMA(ent->velocity, 2000, forward, ent->velocity);
-	//VectorCopy(forward, ent->velocity);
+	if (ent->client->psychic_power >= cost)
+	{
+		vec3_t	start;
+		vec3_t	forward, right, up;
+		vec3_t	aim;
+		vec3_t	dir;
+		vec3_t	end;
+
+		AngleVectors(ent->client->v_angle, forward, right, up);
+		gi.cprintf(ent, PRINT_HIGH, "Forward is %d %d %d", forward);
+		vec3_t forward2;
+		VectorMA(forward2, 200, forward, forward2);
+		VectorMA(ent->velocity, 2000, forward, ent->velocity);
+		ent->client->psychic_power -= cost;
+		//VectorCopy(forward, ent->velocity);
+	}
 
 
 }
 
 void Cmd_PsychicLift(edict_t* ent)
 {
-	vec3_t	start;
-	vec3_t	forward, right, up;
-	vec3_t	aim;
-	vec3_t	dir;
-	vec3_t	end;
+	int cost = 300;
 
-	//vectoangles(ent->owner->client->v_angle, dir);
-	if (ent->client == NULL) {
-		//gi.cprintf(ent, PRINT_HIGH, "Entity is not a client");
-	}
-	else {
-		//gi.cprintf(ent, PRINT_HIGH, "Entity is a client");
-		AngleVectors(ent->client->v_angle, forward, right, up);
-		vec3_t offset;
-		VectorSet(offset, 24, 6, ent->viewheight - 7);
-		G_ProjectSource(ent->s.origin, offset, forward, right, start);
-		VectorMA(start, 8192, forward, end);
-		trace_t tr;
-		tr = gi.trace(start, NULL, NULL, end, ent, MASK_SHOT);
-		if (tr.ent->takedamage) {
-			//gi.cprintf(ent, PRINT_HIGH, "IT TOOK DAMAGE\n");
-			tr.ent->velocity[2] = 500;
+	if (ent->client->psychic_power >= cost)
+	{
+		vec3_t	start;
+		vec3_t	forward, right, up;
+		vec3_t	aim;
+		vec3_t	dir;
+		vec3_t	end;
+
+		//vectoangles(ent->owner->client->v_angle, dir);
+		if (ent->client == NULL) {
+			//gi.cprintf(ent, PRINT_HIGH, "Entity is not a client");
 		}
-		else if (tr.ent != NULL) {
-			//Debug messages
-			/*gi.cprintf(ent, PRINT_HIGH, "We hit something but it does not take damage\n");
-			gi.cprintf(ent, PRINT_HIGH, "We hit the following: %s\n", tr.ent->classname);
-			gi.cprintf(ent, PRINT_HIGH, "Our entity is: %s\n", ent->classname);
-			gi.cprintf(ent, PRINT_HIGH, "The coordinates of what we hit are %d, %d, %d\n", tr.ent->s.origin[0], tr.ent->s.origin[1], tr.ent->s.origin[2]);
-			gi.cprintf(ent, PRINT_HIGH, "Our coordinates are %d, %d, %d\n", ent->s.origin[0], ent->s.origin[1], ent->s.origin[2]);*/
+		else {
+			//gi.cprintf(ent, PRINT_HIGH, "Entity is a client");
+			AngleVectors(ent->client->v_angle, forward, right, up);
+			vec3_t offset;
+			VectorSet(offset, 24, 6, ent->viewheight - 7);
+			G_ProjectSource(ent->s.origin, offset, forward, right, start);
+			VectorMA(start, 8192, forward, end);
+			trace_t tr;
+			tr = gi.trace(start, NULL, NULL, end, ent, MASK_SHOT);
+			if (tr.ent->takedamage) {
+				//gi.cprintf(ent, PRINT_HIGH, "IT TOOK DAMAGE\n");
+				tr.ent->velocity[2] = 500;
+				ent->client->psychic_power -= cost;
+			}
+			else if (tr.ent != NULL) {
+				//Debug messages
+				/*gi.cprintf(ent, PRINT_HIGH, "We hit something but it does not take damage\n");
+				gi.cprintf(ent, PRINT_HIGH, "We hit the following: %s\n", tr.ent->classname);
+				gi.cprintf(ent, PRINT_HIGH, "Our entity is: %s\n", ent->classname);
+				gi.cprintf(ent, PRINT_HIGH, "The coordinates of what we hit are %d, %d, %d\n", tr.ent->s.origin[0], tr.ent->s.origin[1], tr.ent->s.origin[2]);
+				gi.cprintf(ent, PRINT_HIGH, "Our coordinates are %d, %d, %d\n", ent->s.origin[0], ent->s.origin[1], ent->s.origin[2]);*/
+			}
 		}
+
+		//gi.cprintf(ent, PRINT_HIGH, "Made it past AngleVectors");
+		/*
+		}*/
 	}
-	
-	gi.cprintf(ent, PRINT_HIGH, "Made it past AngleVectors");
-	/*
-	}*/
 }
 
 void Cmd_PsychicPush(edict_t* ent) 
 {
-	vec3_t	start;
-	vec3_t	forward, right, up;
-	vec3_t	aim;
-	vec3_t	dir;
-	vec3_t	end;
+	int cost = 300;
 
-	//vectoangles(ent->owner->client->v_angle, dir);
-	if (ent->client == NULL) {
-		//gi.cprintf(ent, PRINT_HIGH, "Entity is not a client");
-	}
-	else {
-		//gi.cprintf(ent, PRINT_HIGH, "Entity is a client");
-		AngleVectors(ent->client->v_angle, forward, right, up);
-		vec3_t offset;
-		VectorSet(offset, 24, 6, ent->viewheight - 7);
-		G_ProjectSource(ent->s.origin, offset, forward, right, start);
-		VectorMA(start, 8192, forward, end);
-		trace_t tr;
-		tr = gi.trace(start, NULL, NULL, end, ent, MASK_SHOT);
-		if (tr.ent->takedamage) {
-			//gi.cprintf(ent, PRINT_HIGH, "IT TOOK DAMAGE\n");
-			tr.ent->velocity[0] = end[0];
-			tr.ent->velocity[1] = end[1];
-			tr.ent->velocity[2] = 100;
-		}
-		else if (tr.ent != NULL) {
-			//Debug messages
-			/*gi.cprintf(ent, PRINT_HIGH, "We hit something but it does not take damage\n");
-			gi.cprintf(ent, PRINT_HIGH, "We hit the following: %s\n", tr.ent->classname);
-			gi.cprintf(ent, PRINT_HIGH, "Our entity is: %s\n", ent->classname);
-			gi.cprintf(ent, PRINT_HIGH, "The coordinates of what we hit are %d, %d, %d\n", tr.ent->s.origin[0], tr.ent->s.origin[1], tr.ent->s.origin[2]);
-			gi.cprintf(ent, PRINT_HIGH, "Our coordinates are %d, %d, %d\n", ent->s.origin[0], ent->s.origin[1], ent->s.origin[2]);*/
-		}
-	}
+	if (ent->client->psychic_power >= cost)
+	{
+		vec3_t	start;
+		vec3_t	forward, right, up;
+		vec3_t	aim;
+		vec3_t	dir;
+		vec3_t	end;
 
-	gi.cprintf(ent, PRINT_HIGH, "Made it past AngleVectors");
-	/*
-	}*/
+		//vectoangles(ent->owner->client->v_angle, dir);
+		if (ent->client == NULL) {
+			//gi.cprintf(ent, PRINT_HIGH, "Entity is not a client");
+		}
+		else {
+			//gi.cprintf(ent, PRINT_HIGH, "Entity is a client");
+			AngleVectors(ent->client->v_angle, forward, right, up);
+			vec3_t offset;
+			VectorSet(offset, 24, 6, ent->viewheight - 7);
+			G_ProjectSource(ent->s.origin, offset, forward, right, start);
+			VectorMA(start, 8192, forward, end);
+			trace_t tr;
+			tr = gi.trace(start, NULL, NULL, end, ent, MASK_SHOT);
+			if (tr.ent->takedamage) {
+				//gi.cprintf(ent, PRINT_HIGH, "IT TOOK DAMAGE\n");
+				tr.ent->velocity[0] = end[0];
+				tr.ent->velocity[1] = end[1];
+				tr.ent->velocity[2] = 100;
+				ent->client->psychic_power -= cost;
+			}
+			else if (tr.ent != NULL) {
+				//Debug messages
+				/*gi.cprintf(ent, PRINT_HIGH, "We hit something but it does not take damage\n");
+				gi.cprintf(ent, PRINT_HIGH, "We hit the following: %s\n", tr.ent->classname);
+				gi.cprintf(ent, PRINT_HIGH, "Our entity is: %s\n", ent->classname);
+				gi.cprintf(ent, PRINT_HIGH, "The coordinates of what we hit are %d, %d, %d\n", tr.ent->s.origin[0], tr.ent->s.origin[1], tr.ent->s.origin[2]);
+				gi.cprintf(ent, PRINT_HIGH, "Our coordinates are %d, %d, %d\n", ent->s.origin[0], ent->s.origin[1], ent->s.origin[2]);*/
+			}
+		}
+
+		//gi.cprintf(ent, PRINT_HIGH, "Made it past AngleVectors");
+		/*
+		}*/
+	}
 }
 
 void Cmd_PsychicPull(edict_t* ent)
 {
-	vec3_t	start;
-	vec3_t	forward, right, up;
-	vec3_t	aim;
-	vec3_t	dir;
-	vec3_t	end;
+	int cost = 300;
 
-	//vectoangles(ent->owner->client->v_angle, dir);
-	if (ent->client == NULL) {
-		//gi.cprintf(ent, PRINT_HIGH, "Entity is not a client");
-	}
-	else {
-		//gi.cprintf(ent, PRINT_HIGH, "Entity is a client");
-		AngleVectors(ent->client->v_angle, forward, right, up);
-		vec3_t offset;
-		VectorSet(offset, 24, 6, ent->viewheight - 7);
-		G_ProjectSource(ent->s.origin, offset, forward, right, start);
-		VectorMA(start, 8192, forward, end);
-		trace_t tr;
-		tr = gi.trace(start, NULL, NULL, end, ent, MASK_SHOT);
-		if (tr.ent->takedamage) {
-			//gi.cprintf(ent, PRINT_HIGH, "IT TOOK DAMAGE\n");
-			tr.ent->velocity[0] = -end[0];
-			tr.ent->velocity[1] = -end[1];
-			tr.ent->velocity[2] = 100;
-		}
-		else if (tr.ent != NULL) {
-			//Debug messages
-			/*gi.cprintf(ent, PRINT_HIGH, "We hit something but it does not take damage\n");
-			gi.cprintf(ent, PRINT_HIGH, "We hit the following: %s\n", tr.ent->classname);
-			gi.cprintf(ent, PRINT_HIGH, "Our entity is: %s\n", ent->classname);
-			gi.cprintf(ent, PRINT_HIGH, "The coordinates of what we hit are %d, %d, %d\n", tr.ent->s.origin[0], tr.ent->s.origin[1], tr.ent->s.origin[2]);
-			gi.cprintf(ent, PRINT_HIGH, "Our coordinates are %d, %d, %d\n", ent->s.origin[0], ent->s.origin[1], ent->s.origin[2]);*/
-		}
-	}
+	if (ent->client->psychic_power >= cost)
+	{
+		vec3_t	start;
+		vec3_t	forward, right, up;
+		vec3_t	aim;
+		vec3_t	dir;
+		vec3_t	end;
 
-	gi.cprintf(ent, PRINT_HIGH, "Made it past AngleVectors");
-	/*
-	}*/
+		//vectoangles(ent->owner->client->v_angle, dir);
+		if (ent->client == NULL) {
+			//gi.cprintf(ent, PRINT_HIGH, "Entity is not a client");
+		}
+		else {
+			//gi.cprintf(ent, PRINT_HIGH, "Entity is a client");
+			AngleVectors(ent->client->v_angle, forward, right, up);
+			vec3_t offset;
+			VectorSet(offset, 24, 6, ent->viewheight - 7);
+			G_ProjectSource(ent->s.origin, offset, forward, right, start);
+			VectorMA(start, 8192, forward, end);
+			trace_t tr;
+			tr = gi.trace(start, NULL, NULL, end, ent, MASK_SHOT);
+			if (tr.ent->takedamage) {
+				//gi.cprintf(ent, PRINT_HIGH, "IT TOOK DAMAGE\n");
+				tr.ent->velocity[0] = -end[0];
+				tr.ent->velocity[1] = -end[1];
+				tr.ent->velocity[2] = 100;
+				ent->client->psychic_power -= cost;
+			}
+			else if (tr.ent != NULL) {
+				//Debug messages
+				/*gi.cprintf(ent, PRINT_HIGH, "We hit something but it does not take damage\n");
+				gi.cprintf(ent, PRINT_HIGH, "We hit the following: %s\n", tr.ent->classname);
+				gi.cprintf(ent, PRINT_HIGH, "Our entity is: %s\n", ent->classname);
+				gi.cprintf(ent, PRINT_HIGH, "The coordinates of what we hit are %d, %d, %d\n", tr.ent->s.origin[0], tr.ent->s.origin[1], tr.ent->s.origin[2]);
+				gi.cprintf(ent, PRINT_HIGH, "Our coordinates are %d, %d, %d\n", ent->s.origin[0], ent->s.origin[1], ent->s.origin[2]);*/
+			}
+		}
+
+		//gi.cprintf(ent, PRINT_HIGH, "Made it past AngleVectors");
+		/*
+		}*/
+	}
 }
+
+void Cmd_PsychicWarp(edict_t* ent) {
+	if (ent->client != NULL) {
+		int cost = 500;
+
+		if (ent->client->psychic_power >= cost)
+		{
+			vec3_t temp_position;
+			VectorCopy(ent->s.origin, temp_position);
+			if (ent->client->teleport_position[0] != 0 || ent->client->teleport_position[1] != 0 || ent->client->teleport_position[2] != 0)
+			{
+				VectorCopy(ent->client->teleport_position, ent->s.origin);
+				VectorCopy(temp_position, ent->client->teleport_position);
+				ent->client->psychic_power -= cost;
+			}
+		}
+	}
+}
+
+//scrapping this as it does not work. we will make a new movement ability instead
+void Cmd_PsychicAntiGrav(edict_t* ent) {
+	if (ent->client != NULL) {
+		int cost = 200;
+		if (ent->gravity != 0) {
+			gi.cprintf(ent, PRINT_HIGH, "The gravity is %d\n", ent->gravity);
+			if (ent->client->psychic_power >= cost)
+			{
+				ent->gravity = 0;
+				ent->client->psychic_power -= cost;
+			}
+		}
+		else {
+			ent->gravity = 1;
+		}
+		
+	}
+}
+
+void Cmd_PsychicFloat(edict_t* ent) {
+	if (ent->client != NULL) {
+		int cost = 200;
+		int float_timer = 300;
+		if (ent->client->floating == 0 && ent->client->psychic_power >= cost)
+		{
+			ent->client->floating = float_timer;
+			ent->client->psychic_power -= cost;
+			//in client think, floating will set y velocity to a small number for 5 seconds when thinking
+		}
+		else
+		{
+			//disable floating if pressed again
+			ent->client->floating = 0;
+		}
+	}
+
+}
+
 
 //ETHELYN END
 
@@ -1174,6 +1266,13 @@ void ClientCommand (edict_t *ent)
 		Cmd_PsychicPush(ent);
 	else if (Q_stricmp(cmd, "psychicpull") == 0)
 		Cmd_PsychicPull(ent);
+	else if (Q_stricmp(cmd, "psychicwarp") == 0)
+		Cmd_PsychicWarp(ent);
+	else if (Q_stricmp(cmd, "psychicfloat") == 0)
+		Cmd_PsychicFloat(ent);
+	//psychicantigrav is currently unused
+	else if (Q_stricmp(cmd, "psychicantigrav") == 0)
+		Cmd_PsychicAntiGrav(ent);
 	//ETHELYN END
 	else	// anything that doesn't match a command will be a chat
 		Cmd_Say_f (ent, false, true);

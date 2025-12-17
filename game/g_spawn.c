@@ -701,7 +701,17 @@ char *single_statusbar =
 "	xv	148 "
 "	pic	11 "
 "endif "
-;
+
+//ETHELYN START add ; on above "endif " if removing
+// psychic power
+"if 18 "
+	"xv -130 "
+	"yb -80 "
+	"string \"PSYCHIC POWER:\" "
+	"xv 0 "
+	"num 3    18 "
+	"endif ";
+//ETHELYN END
 
 char *dm_statusbar =
 "yb	-24 "
@@ -779,8 +789,11 @@ char *dm_statusbar =
   "string \"Chasing\" "
   "xv 64 "
   "stat_string 16 "
-"endif "
-;
+"endif ";
+
+
+
+
 
 
 /*QUAKED worldspawn (0 0 0) ?

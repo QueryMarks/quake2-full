@@ -1009,6 +1009,10 @@ typedef enum
 #define STAT_CHASE				16
 #define STAT_SPECTATOR			17
 
+//ETHELYN START
+#define STAT_PSYCHICPOWER       18 
+//ETHELYN END
+
 #define	MAX_STATS				32
 
 

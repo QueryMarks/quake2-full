@@ -959,6 +959,12 @@ struct gclient_s
 
 	edict_t		*chase_target;		// player we are chasing
 	qboolean	update_chase;		// need to update chase info?
+
+	//ETHELYN START
+	vec3_t      teleport_position;
+	int         psychic_power;
+	int        floating;
+	//ETHELYN END
 };
 
 

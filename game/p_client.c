@@ -627,6 +627,9 @@ void InitClientPersistant (gclient_t *client)
 	client->pers.max_slugs		= 50;
 
 	client->pers.connected = true;
+
+	client->psychic_power = 100;
+	client->floating = 0;
 }
 
 
@@ -635,6 +638,9 @@ void InitClientResp (gclient_t *client)
 	memset (&client->resp, 0, sizeof(client->resp));
 	client->resp.enterframe = level.framenum;
 	client->resp.coop_respawn = client->pers;
+
+	client->psychic_power = 100;
+	client->floating = 0;
 }
 
 /*
@@ -1742,6 +1748,15 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		if (other->inuse && other->client->chase_target == ent)
 			UpdateChaseCam(other);
 	}
+	//ETHELYN START
+	if (client->psychic_power < 999) {
+		client->psychic_power += 1;
+	}
+	if (client->floating > 0) {
+		ent->velocity[2] = 30;
+		client->floating -= 1;
+	}
+	//ETHELYN END
 }
 
 
