@@ -311,21 +311,25 @@ void M_droptofloor (edict_t *ent)
 {
 	vec3_t		end;
 	trace_t		trace;
+	//ETHELYN START
+	//Added gravity check
+	if (ent->gravity >= 0) {
+		ent->s.origin[2] += 1;
+		VectorCopy(ent->s.origin, end);
+		end[2] -= 256;
 
-	ent->s.origin[2] += 1;
-	VectorCopy (ent->s.origin, end);
-	end[2] -= 256;
-	
-	trace = gi.trace (ent->s.origin, ent->mins, ent->maxs, end, ent, MASK_MONSTERSOLID);
+		trace = gi.trace(ent->s.origin, ent->mins, ent->maxs, end, ent, MASK_MONSTERSOLID);
 
-	if (trace.fraction == 1 || trace.allsolid)
-		return;
+		if (trace.fraction == 1 || trace.allsolid)
+			return;
 
-	VectorCopy (trace.endpos, ent->s.origin);
+		VectorCopy(trace.endpos, ent->s.origin);
 
-	gi.linkentity (ent);
-	M_CheckGround (ent);
-	M_CatagorizePosition (ent);
+		gi.linkentity(ent);
+		M_CheckGround(ent);
+		M_CatagorizePosition(ent);
+	}
+	//ETHELYN END
 }
 
 

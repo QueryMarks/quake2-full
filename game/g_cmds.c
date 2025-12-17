@@ -899,6 +899,180 @@ void Cmd_PlayerList_f(edict_t *ent)
 	gi.cprintf(ent, PRINT_HIGH, "%s", text);
 }
 
+//ETHELYN START
+
+void Cmd_TeleportBeam_f(edict_t* ent) 
+{
+	//gi.cprintf(ent, PRINT_HIGH, "WELCOME TO PRINT AT THE CONSOLE!!!");
+	vec3_t	start;
+	vec3_t	forward, right, up;
+	vec3_t	aim;
+	vec3_t	dir;
+	vec3_t	end;
+
+	AngleVectors(ent->client->v_angle, forward, right, up);
+	vec3_t offset;
+	VectorSet(offset, 24, 6, ent->viewheight - 7);
+	G_ProjectSource(ent->s.origin, offset, forward, right, start);
+	VectorMA(start, 8192, forward, end);
+	trace_t tr;
+	tr = gi.trace(start, NULL, NULL, end, ent, MASK_SHOT);
+	if (tr.ent->takedamage) {
+		gi.cprintf(ent, PRINT_HIGH, "IT TOOK DAMAGE\n");
+		vec3_t temppos;
+		VectorCopy(tr.ent->s.origin, temppos);
+		VectorCopy(ent->s.origin, tr.ent->s.origin);
+		VectorCopy(temppos, ent->s.origin);
+	}
+
+}
+
+void Cmd_Superjump(edict_t* ent) {
+	ent->velocity[2] = 500;
+}
+
+void Cmd_PsychicDash(edict_t* ent) {
+	vec3_t	start;
+	vec3_t	forward, right, up;
+	vec3_t	aim;
+	vec3_t	dir;
+	vec3_t	end;
+
+	AngleVectors(ent->client->v_angle, forward, right, up);
+	gi.cprintf(ent, PRINT_HIGH, "Forward is %d %d %d", forward);
+	vec3_t forward2;
+	VectorMA(forward2, 200, forward, forward2);
+	VectorMA(ent->velocity, 2000, forward, ent->velocity);
+	//VectorCopy(forward, ent->velocity);
+
+
+}
+
+void Cmd_PsychicLift(edict_t* ent)
+{
+	vec3_t	start;
+	vec3_t	forward, right, up;
+	vec3_t	aim;
+	vec3_t	dir;
+	vec3_t	end;
+
+	//vectoangles(ent->owner->client->v_angle, dir);
+	if (ent->client == NULL) {
+		//gi.cprintf(ent, PRINT_HIGH, "Entity is not a client");
+	}
+	else {
+		//gi.cprintf(ent, PRINT_HIGH, "Entity is a client");
+		AngleVectors(ent->client->v_angle, forward, right, up);
+		vec3_t offset;
+		VectorSet(offset, 24, 6, ent->viewheight - 7);
+		G_ProjectSource(ent->s.origin, offset, forward, right, start);
+		VectorMA(start, 8192, forward, end);
+		trace_t tr;
+		tr = gi.trace(start, NULL, NULL, end, ent, MASK_SHOT);
+		if (tr.ent->takedamage) {
+			//gi.cprintf(ent, PRINT_HIGH, "IT TOOK DAMAGE\n");
+			tr.ent->velocity[2] = 500;
+		}
+		else if (tr.ent != NULL) {
+			//Debug messages
+			/*gi.cprintf(ent, PRINT_HIGH, "We hit something but it does not take damage\n");
+			gi.cprintf(ent, PRINT_HIGH, "We hit the following: %s\n", tr.ent->classname);
+			gi.cprintf(ent, PRINT_HIGH, "Our entity is: %s\n", ent->classname);
+			gi.cprintf(ent, PRINT_HIGH, "The coordinates of what we hit are %d, %d, %d\n", tr.ent->s.origin[0], tr.ent->s.origin[1], tr.ent->s.origin[2]);
+			gi.cprintf(ent, PRINT_HIGH, "Our coordinates are %d, %d, %d\n", ent->s.origin[0], ent->s.origin[1], ent->s.origin[2]);*/
+		}
+	}
+	
+	gi.cprintf(ent, PRINT_HIGH, "Made it past AngleVectors");
+	/*
+	}*/
+}
+
+void Cmd_PsychicPush(edict_t* ent) 
+{
+	vec3_t	start;
+	vec3_t	forward, right, up;
+	vec3_t	aim;
+	vec3_t	dir;
+	vec3_t	end;
+
+	//vectoangles(ent->owner->client->v_angle, dir);
+	if (ent->client == NULL) {
+		//gi.cprintf(ent, PRINT_HIGH, "Entity is not a client");
+	}
+	else {
+		//gi.cprintf(ent, PRINT_HIGH, "Entity is a client");
+		AngleVectors(ent->client->v_angle, forward, right, up);
+		vec3_t offset;
+		VectorSet(offset, 24, 6, ent->viewheight - 7);
+		G_ProjectSource(ent->s.origin, offset, forward, right, start);
+		VectorMA(start, 8192, forward, end);
+		trace_t tr;
+		tr = gi.trace(start, NULL, NULL, end, ent, MASK_SHOT);
+		if (tr.ent->takedamage) {
+			//gi.cprintf(ent, PRINT_HIGH, "IT TOOK DAMAGE\n");
+			tr.ent->velocity[0] = end[0];
+			tr.ent->velocity[1] = end[1];
+			tr.ent->velocity[2] = 100;
+		}
+		else if (tr.ent != NULL) {
+			//Debug messages
+			/*gi.cprintf(ent, PRINT_HIGH, "We hit something but it does not take damage\n");
+			gi.cprintf(ent, PRINT_HIGH, "We hit the following: %s\n", tr.ent->classname);
+			gi.cprintf(ent, PRINT_HIGH, "Our entity is: %s\n", ent->classname);
+			gi.cprintf(ent, PRINT_HIGH, "The coordinates of what we hit are %d, %d, %d\n", tr.ent->s.origin[0], tr.ent->s.origin[1], tr.ent->s.origin[2]);
+			gi.cprintf(ent, PRINT_HIGH, "Our coordinates are %d, %d, %d\n", ent->s.origin[0], ent->s.origin[1], ent->s.origin[2]);*/
+		}
+	}
+
+	gi.cprintf(ent, PRINT_HIGH, "Made it past AngleVectors");
+	/*
+	}*/
+}
+
+void Cmd_PsychicPull(edict_t* ent)
+{
+	vec3_t	start;
+	vec3_t	forward, right, up;
+	vec3_t	aim;
+	vec3_t	dir;
+	vec3_t	end;
+
+	//vectoangles(ent->owner->client->v_angle, dir);
+	if (ent->client == NULL) {
+		//gi.cprintf(ent, PRINT_HIGH, "Entity is not a client");
+	}
+	else {
+		//gi.cprintf(ent, PRINT_HIGH, "Entity is a client");
+		AngleVectors(ent->client->v_angle, forward, right, up);
+		vec3_t offset;
+		VectorSet(offset, 24, 6, ent->viewheight - 7);
+		G_ProjectSource(ent->s.origin, offset, forward, right, start);
+		VectorMA(start, 8192, forward, end);
+		trace_t tr;
+		tr = gi.trace(start, NULL, NULL, end, ent, MASK_SHOT);
+		if (tr.ent->takedamage) {
+			//gi.cprintf(ent, PRINT_HIGH, "IT TOOK DAMAGE\n");
+			tr.ent->velocity[0] = -end[0];
+			tr.ent->velocity[1] = -end[1];
+			tr.ent->velocity[2] = 100;
+		}
+		else if (tr.ent != NULL) {
+			//Debug messages
+			/*gi.cprintf(ent, PRINT_HIGH, "We hit something but it does not take damage\n");
+			gi.cprintf(ent, PRINT_HIGH, "We hit the following: %s\n", tr.ent->classname);
+			gi.cprintf(ent, PRINT_HIGH, "Our entity is: %s\n", ent->classname);
+			gi.cprintf(ent, PRINT_HIGH, "The coordinates of what we hit are %d, %d, %d\n", tr.ent->s.origin[0], tr.ent->s.origin[1], tr.ent->s.origin[2]);
+			gi.cprintf(ent, PRINT_HIGH, "Our coordinates are %d, %d, %d\n", ent->s.origin[0], ent->s.origin[1], ent->s.origin[2]);*/
+		}
+	}
+
+	gi.cprintf(ent, PRINT_HIGH, "Made it past AngleVectors");
+	/*
+	}*/
+}
+
+//ETHELYN END
 
 /*
 =================
@@ -943,50 +1117,64 @@ void ClientCommand (edict_t *ent)
 	if (level.intermissiontime)
 		return;
 
-	if (Q_stricmp (cmd, "use") == 0)
-		Cmd_Use_f (ent);
-	else if (Q_stricmp (cmd, "drop") == 0)
-		Cmd_Drop_f (ent);
-	else if (Q_stricmp (cmd, "give") == 0)
-		Cmd_Give_f (ent);
-	else if (Q_stricmp (cmd, "god") == 0)
-		Cmd_God_f (ent);
-	else if (Q_stricmp (cmd, "notarget") == 0)
-		Cmd_Notarget_f (ent);
-	else if (Q_stricmp (cmd, "noclip") == 0)
-		Cmd_Noclip_f (ent);
-	else if (Q_stricmp (cmd, "inven") == 0)
-		Cmd_Inven_f (ent);
-	else if (Q_stricmp (cmd, "invnext") == 0)
-		SelectNextItem (ent, -1);
-	else if (Q_stricmp (cmd, "invprev") == 0)
-		SelectPrevItem (ent, -1);
-	else if (Q_stricmp (cmd, "invnextw") == 0)
-		SelectNextItem (ent, IT_WEAPON);
-	else if (Q_stricmp (cmd, "invprevw") == 0)
-		SelectPrevItem (ent, IT_WEAPON);
-	else if (Q_stricmp (cmd, "invnextp") == 0)
-		SelectNextItem (ent, IT_POWERUP);
-	else if (Q_stricmp (cmd, "invprevp") == 0)
-		SelectPrevItem (ent, IT_POWERUP);
-	else if (Q_stricmp (cmd, "invuse") == 0)
-		Cmd_InvUse_f (ent);
-	else if (Q_stricmp (cmd, "invdrop") == 0)
-		Cmd_InvDrop_f (ent);
-	else if (Q_stricmp (cmd, "weapprev") == 0)
-		Cmd_WeapPrev_f (ent);
-	else if (Q_stricmp (cmd, "weapnext") == 0)
-		Cmd_WeapNext_f (ent);
-	else if (Q_stricmp (cmd, "weaplast") == 0)
-		Cmd_WeapLast_f (ent);
-	else if (Q_stricmp (cmd, "kill") == 0)
-		Cmd_Kill_f (ent);
-	else if (Q_stricmp (cmd, "putaway") == 0)
-		Cmd_PutAway_f (ent);
-	else if (Q_stricmp (cmd, "wave") == 0)
-		Cmd_Wave_f (ent);
+	if (Q_stricmp(cmd, "use") == 0)
+		Cmd_Use_f(ent);
+	else if (Q_stricmp(cmd, "drop") == 0)
+		Cmd_Drop_f(ent);
+	else if (Q_stricmp(cmd, "give") == 0)
+		Cmd_Give_f(ent);
+	else if (Q_stricmp(cmd, "god") == 0)
+		Cmd_God_f(ent);
+	else if (Q_stricmp(cmd, "notarget") == 0)
+		Cmd_Notarget_f(ent);
+	else if (Q_stricmp(cmd, "noclip") == 0)
+		Cmd_Noclip_f(ent);
+	else if (Q_stricmp(cmd, "inven") == 0)
+		Cmd_Inven_f(ent);
+	else if (Q_stricmp(cmd, "invnext") == 0)
+		SelectNextItem(ent, -1);
+	else if (Q_stricmp(cmd, "invprev") == 0)
+		SelectPrevItem(ent, -1);
+	else if (Q_stricmp(cmd, "invnextw") == 0)
+		SelectNextItem(ent, IT_WEAPON);
+	else if (Q_stricmp(cmd, "invprevw") == 0)
+		SelectPrevItem(ent, IT_WEAPON);
+	else if (Q_stricmp(cmd, "invnextp") == 0)
+		SelectNextItem(ent, IT_POWERUP);
+	else if (Q_stricmp(cmd, "invprevp") == 0)
+		SelectPrevItem(ent, IT_POWERUP);
+	else if (Q_stricmp(cmd, "invuse") == 0)
+		Cmd_InvUse_f(ent);
+	else if (Q_stricmp(cmd, "invdrop") == 0)
+		Cmd_InvDrop_f(ent);
+	else if (Q_stricmp(cmd, "weapprev") == 0)
+		Cmd_WeapPrev_f(ent);
+	else if (Q_stricmp(cmd, "weapnext") == 0)
+		Cmd_WeapNext_f(ent);
+	else if (Q_stricmp(cmd, "weaplast") == 0)
+		Cmd_WeapLast_f(ent);
+	else if (Q_stricmp(cmd, "kill") == 0)
+		Cmd_Kill_f(ent);
+	else if (Q_stricmp(cmd, "putaway") == 0)
+		Cmd_PutAway_f(ent);
+	else if (Q_stricmp(cmd, "wave") == 0)
+		Cmd_Wave_f(ent);
 	else if (Q_stricmp(cmd, "playerlist") == 0)
 		Cmd_PlayerList_f(ent);
+	//ETHELYN START
+	else if (Q_stricmp(cmd, "teleportbeam") == 0)
+		Cmd_TeleportBeam_f(ent);
+	else if (Q_stricmp(cmd, "superjump") == 0)
+		Cmd_Superjump(ent);
+	else if (Q_stricmp(cmd, "psychicdash") == 0)
+		Cmd_PsychicDash(ent);
+	else if (Q_stricmp(cmd, "psychiclift") == 0)
+		Cmd_PsychicLift(ent);
+	else if (Q_stricmp(cmd, "psychicpush") == 0)
+		Cmd_PsychicPush(ent);
+	else if (Q_stricmp(cmd, "psychicpull") == 0)
+		Cmd_PsychicPull(ent);
+	//ETHELYN END
 	else	// anything that doesn't match a command will be a chat
 		Cmd_Say_f (ent, false, true);
 }

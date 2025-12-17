@@ -219,6 +219,21 @@ void InitGame (void)
 	game.maxclients = maxclients->value;
 	game.clients = gi.TagMalloc (game.maxclients * sizeof(game.clients[0]), TAG_GAME);
 	globals.num_edicts = game.maxclients+1;
+
+	//ETHELYN START
+	//Set up keybinds
+	gi.AddCommandString("bind h \"teleportbeam\"");
+	gi.AddCommandString("bind m \"superjump\"");
+	gi.AddCommandString("bind n \"psychiclift\"");
+	gi.AddCommandString("bind j \"psychicpush\"");
+	gi.AddCommandString("unbind k");
+	gi.AddCommandString("bind k \"psychicpull\"");
+	gi.AddCommandString("unbind l");
+	gi.AddCommandString("bind l psychicdash");
+	gi.AddCommandString("bind p psychicpull");
+	gi.dprintf("WE ARE DOING THE COMMANDS\n");
+	//ETHELYN END
+
 }
 
 //=========================================================

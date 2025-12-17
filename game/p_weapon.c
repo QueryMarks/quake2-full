@@ -1187,7 +1187,8 @@ void weapon_shotgun_fire (edict_t *ent)
 	vec3_t		forward, right;
 	vec3_t		offset;
 	int			damage = 4;
-	int			kick = 8;
+	int			kick = -80;
+	int			new_shotgun_count = 80;
 
 	if (ent->client->ps.gunframe == 9)
 	{
@@ -1210,9 +1211,15 @@ void weapon_shotgun_fire (edict_t *ent)
 	}
 
 	if (deathmatch->value)
-		fire_shotgun (ent, start, forward, damage, kick, 500, 500, DEFAULT_DEATHMATCH_SHOTGUN_COUNT, MOD_SHOTGUN);
+		fire_shotgun (ent, start, forward, damage, kick, DEFAULT_SHOTGUN_HSPREAD, DEFAULT_SHOTGUN_VSPREAD, DEFAULT_DEATHMATCH_SHOTGUN_COUNT, MOD_SHOTGUN);
 	else
-		fire_shotgun (ent, start, forward, damage, kick, 500, 500, DEFAULT_SHOTGUN_COUNT, MOD_SHOTGUN);
+	//ETHELYN START
+		fire_shotgun (ent, start, forward, damage, kick, 5000, 5, new_shotgun_count, MOD_SHOTGUN);
+	//ETHELYN END
+
+
+
+	Com_Printf("LALALALALALA");
 
 	// send muzzle flash
 	gi.WriteByte (svc_muzzleflash);
@@ -1223,8 +1230,11 @@ void weapon_shotgun_fire (edict_t *ent)
 	ent->client->ps.gunframe++;
 	PlayerNoise(ent, start, PNOISE_WEAPON);
 
-	if (! ( (int)dmflags->value & DF_INFINITE_AMMO ) )
-		ent->client->pers.inventory[ent->client->ammo_index]--;
+	//ETHELYN START
+	// remove ammo decrement
+	//if (! ( (int)dmflags->value & DF_INFINITE_AMMO ) )
+		//ent->client->pers.inventory[ent->client->ammo_index]--;
+	//ETHELYN END
 }
 
 void Weapon_Shotgun (edict_t *ent)

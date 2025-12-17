@@ -810,9 +810,12 @@ void PM_CheckJump (void)
 			pml.velocity[2] = 50;
 		return;
 	}
+	//ETHELYN START
 
-	if (pm->groundentity == NULL)
-		return;		// in air, so no effect
+	//if (pm->groundentity == NULL)
+	//	return;		// in air, so no effect
+
+	//ETHELYN END
 
 	pm->s.pm_flags |= PMF_JUMP_HELD;
 

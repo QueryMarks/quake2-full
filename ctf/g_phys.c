@@ -693,7 +693,11 @@ void SV_Physics_Toss (edict_t *ent)
 			ent->groundentity = NULL;
 
 // if onground, return without moving
-	if ( ent->groundentity )
+	if ( ent->groundentity 
+		//ETHELYN START
+		//&& ent->gravity >= 0
+		//ETHELYN END
+		)
 		return;
 
 	VectorCopy (ent->s.origin, old_origin);
