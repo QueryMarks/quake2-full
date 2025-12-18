@@ -524,6 +524,8 @@ void G_SetStats (edict_t *ent)
 	//ETHELYN
 
 	ent->client->ps.stats[STAT_PSYCHICPOWER] = ent->client->psychic_power;
+
+	ent->client->ps.stats[STAT_PSYCHICVISION] = ent->client->psychic_vision_enabled;
 }
 
 /*

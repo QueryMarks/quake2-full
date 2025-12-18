@@ -815,13 +815,13 @@ BLASTER / HYPERBLASTER
 
 void Blaster_Fire (edict_t *ent, vec3_t g_offset, int damage, qboolean hyper, int effect)
 {
-	vec3_t	forward, right;
+	vec3_t	forward, right, up;
 	vec3_t	start;
 	vec3_t	offset;
 
 	if (is_quad)
 		damage *= 4;
-	AngleVectors (ent->client->v_angle, forward, right, NULL);
+	AngleVectors (ent->client->v_angle, forward, right, up);
 	VectorSet(offset, 24, 8, ent->viewheight-8);
 	VectorAdd (offset, g_offset, offset);
 	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
@@ -829,7 +829,24 @@ void Blaster_Fire (edict_t *ent, vec3_t g_offset, int damage, qboolean hyper, in
 	VectorScale (forward, -2, ent->client->kick_origin);
 	ent->client->kick_angles[0] = -1;
 
-	fire_blaster (ent, start, forward, damage, 1000, effect, hyper);
+
+	for (int i = 0; i < 10; i++)
+	{
+		vec3_t forward2;
+		VectorCopy(forward, forward2);
+		VectorMA(forward2, (i-5)*0.03, right, forward2);
+		VectorMA(forward2, (i-5)*0.03, up, forward2);
+		fire_blaster(ent, start, forward2, damage*0.1, 200, effect, hyper);
+	}
+	for (int i = 0; i < 10; i++)
+	{
+		vec3_t forward2;
+		VectorCopy(forward, forward2);
+		VectorMA(forward2, (i - 5) * 0.03, right, forward2);
+		VectorMA(forward2, -((i - 5) * 0.03), up, forward2);
+		fire_blaster(ent, start, forward2, damage*0.1, 200, effect, hyper);
+	}
+	
 
 	// send muzzle flash
 	gi.WriteByte (svc_muzzleflash);

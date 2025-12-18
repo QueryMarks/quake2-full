@@ -431,6 +431,30 @@ void monster_think (edict_t *self)
 	M_CatagorizePosition (self);
 	M_WorldEffects (self);
 	M_SetEffects (self);
+	//ETHELYN START
+	//doomed status
+	if(self->status_effect == 1)
+	{
+		if (self->doom_timer < 26) {
+			self->pain(self, self, 30, 300);
+		}
+		if (self->doom_timer > 0) {
+			self->doom_timer -= 1;
+		}
+		else
+		{
+			gi.sound(self, CHAN_VOICE, gi.soundindex("weapons/rocklx1a.wav"), 1, ATTN_NORM, 0);
+			self->health = self->health - 5000;
+			Killed(self, self, self, 5000, self->s.origin);
+		}
+	}
+	else if (self->status_effect == 2) {
+		self->health -= 1;
+			if (self->health < 0) {
+				Killed(self, self, self, 1, self->s.origin);
+				gi.sound(self, CHAN_VOICE, gi.soundindex("weapons/grenlx1a.wav"), 1, ATTN_NORM, 0);
+			}
+	}
 }
 
 

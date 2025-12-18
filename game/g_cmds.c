@@ -1038,8 +1038,8 @@ void Cmd_PsychicPush(edict_t* ent)
 			tr = gi.trace(start, NULL, NULL, end, ent, MASK_SHOT);
 			if (tr.ent->takedamage) {
 				//gi.cprintf(ent, PRINT_HIGH, "IT TOOK DAMAGE\n");
-				tr.ent->velocity[0] = end[0];
-				tr.ent->velocity[1] = end[1];
+				tr.ent->velocity[0] = forward[0]*8192;
+				tr.ent->velocity[1] = forward[1]*8192;
 				tr.ent->velocity[2] = 100;
 				ent->client->psychic_power -= cost;
 			}
@@ -1086,8 +1086,8 @@ void Cmd_PsychicPull(edict_t* ent)
 			tr = gi.trace(start, NULL, NULL, end, ent, MASK_SHOT);
 			if (tr.ent->takedamage) {
 				//gi.cprintf(ent, PRINT_HIGH, "IT TOOK DAMAGE\n");
-				tr.ent->velocity[0] = -end[0];
-				tr.ent->velocity[1] = -end[1];
+				tr.ent->velocity[0] = -forward[0];
+				tr.ent->velocity[1] = -forward[1];
 				tr.ent->velocity[2] = 100;
 				ent->client->psychic_power -= cost;
 			}
@@ -1213,6 +1213,10 @@ void Cmd_PsychicHold(edict_t* ent) {
 	}
 }
 
+void Cmd_PsychicVision(edict_t* ent) {
+	ent->client->psychic_vision_enabled = !ent->client->psychic_vision_enabled;
+}
+
 
 //ETHELYN END
 
@@ -1324,6 +1328,9 @@ void ClientCommand (edict_t *ent)
 		Cmd_PsychicHeal(ent);
 	else if (Q_stricmp(cmd, "psychichold") == 0)
 		Cmd_PsychicHold(ent);
+	else if (Q_stricmp(cmd, "psychicvision") == 0) {
+		Cmd_PsychicVision(ent);
+	}
 	//psychicantigrav is currently unused
 	else if (Q_stricmp(cmd, "psychicantigrav") == 0)
 		Cmd_PsychicAntiGrav(ent);

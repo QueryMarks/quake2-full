@@ -75,6 +75,7 @@ mmove_t infantry_move_stand = {FRAME_stand50, FRAME_stand71, infantry_frames_sta
 void infantry_stand (edict_t *self)
 {
 	self->monsterinfo.currentmove = &infantry_move_stand;
+	strcpy(self->monsterinfo.state_name, "stand");
 }
 
 
@@ -136,6 +137,7 @@ void infantry_fidget (edict_t *self)
 {
 	self->monsterinfo.currentmove = &infantry_move_fidget;
 	gi.sound (self, CHAN_VOICE, sound_idle, 1, ATTN_IDLE, 0);
+	strcpy(self->monsterinfo.state_name, "fidget");
 }
 
 mframe_t infantry_frames_walk [] =
@@ -179,6 +181,7 @@ void infantry_run (edict_t *self)
 		self->monsterinfo.currentmove = &infantry_move_stand;
 	else
 		self->monsterinfo.currentmove = &infantry_move_run;
+	strcpy(self->monsterinfo.state_name, "run");
 }
 
 
@@ -238,6 +241,7 @@ void infantry_pain (edict_t *self, edict_t *other, float kick, int damage)
 		self->monsterinfo.currentmove = &infantry_move_pain2;
 		gi.sound (self, CHAN_VOICE, sound_pain2, 1, ATTN_NORM, 0);
 	}
+	strcpy(self->monsterinfo.state_name, "pain");
 }
 
 
@@ -299,6 +303,7 @@ void InfantryMachineGun (edict_t *self)
 void infantry_sight (edict_t *self, edict_t *other)
 {
 	gi.sound (self, CHAN_BODY, sound_sight, 1, ATTN_NORM, 0);
+	strcpy(self->monsterinfo.state_name, "sight");
 }
 
 void infantry_dead (edict_t *self)
@@ -310,6 +315,7 @@ void infantry_dead (edict_t *self)
 	gi.linkentity (self);
 
 	M_FlyCheck (self);
+	strcpy(self->monsterinfo.state_name, "dead");
 }
 
 mframe_t infantry_frames_death1 [] =
@@ -423,6 +429,7 @@ void infantry_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int dam
 		self->monsterinfo.currentmove = &infantry_move_death3;
 		gi.sound (self, CHAN_VOICE, sound_die2, 1, ATTN_NORM, 0);
 	}
+	strcpy(self->monsterinfo.state_name, "dead");
 }
 
 
@@ -435,6 +442,7 @@ void infantry_duck_down (edict_t *self)
 	self->takedamage = DAMAGE_YES;
 	self->monsterinfo.pausetime = level.time + 1;
 	gi.linkentity (self);
+	strcpy(self->monsterinfo.state_name, "duck");
 }
 
 void infantry_duck_hold (edict_t *self)
@@ -443,6 +451,7 @@ void infantry_duck_hold (edict_t *self)
 		self->monsterinfo.aiflags &= ~AI_HOLD_FRAME;
 	else
 		self->monsterinfo.aiflags |= AI_HOLD_FRAME;
+	strcpy(self->monsterinfo.state_name, "duck");
 }
 
 void infantry_duck_up (edict_t *self)
@@ -451,6 +460,7 @@ void infantry_duck_up (edict_t *self)
 	self->maxs[2] += 32;
 	self->takedamage = DAMAGE_AIM;
 	gi.linkentity (self);
+	strcpy(self->monsterinfo.state_name, "duck");
 }
 
 mframe_t infantry_frames_duck [] =
@@ -472,6 +482,7 @@ void infantry_dodge (edict_t *self, edict_t *attacker, float eta)
 		self->enemy = attacker;
 
 	self->monsterinfo.currentmove = &infantry_move_duck;
+	strcpy(self->monsterinfo.state_name, "dodge");
 }
 
 
@@ -482,6 +493,7 @@ void infantry_cock_gun (edict_t *self)
 	gi.sound (self, CHAN_WEAPON, sound_weapon_cock, 1, ATTN_NORM, 0);
 	n = (rand() & 15) + 3 + 7;
 	self->monsterinfo.pausetime = level.time + n * FRAMETIME;
+	strcpy(self->monsterinfo.state_name, "cock");
 }
 
 void infantry_fire (edict_t *self)
@@ -492,6 +504,7 @@ void infantry_fire (edict_t *self)
 		self->monsterinfo.aiflags &= ~AI_HOLD_FRAME;
 	else
 		self->monsterinfo.aiflags |= AI_HOLD_FRAME;
+	strcpy(self->monsterinfo.state_name, "fire");
 }
 
 mframe_t infantry_frames_attack1 [] =
@@ -518,6 +531,7 @@ mmove_t infantry_move_attack1 = {FRAME_attak101, FRAME_attak115, infantry_frames
 void infantry_swing (edict_t *self)
 {
 	gi.sound (self, CHAN_WEAPON, sound_punch_swing, 1, ATTN_NORM, 0);
+	strcpy(self->monsterinfo.state_name, "swing");
 }
 
 void infantry_smack (edict_t *self)
@@ -527,6 +541,7 @@ void infantry_smack (edict_t *self)
 	VectorSet (aim, MELEE_DISTANCE, 0, 0);
 	if (fire_hit (self, aim, (5 + (rand() % 5)), 50))
 		gi.sound (self, CHAN_WEAPON, sound_punch_hit, 1, ATTN_NORM, 0);
+	strcpy(self->monsterinfo.state_name, "smack");
 }
 
 mframe_t infantry_frames_attack2 [] =
@@ -548,6 +563,7 @@ void infantry_attack(edict_t *self)
 		self->monsterinfo.currentmove = &infantry_move_attack2;
 	else
 		self->monsterinfo.currentmove = &infantry_move_attack1;
+	strcpy(self->monsterinfo.state_name, "attack");
 }
 
 
@@ -604,4 +620,7 @@ void SP_monster_infantry (edict_t *self)
 	self->monsterinfo.scale = MODEL_SCALE;
 
 	walkmonster_start (self);
+	strcpy(self->monsterinfo.state_name, "idle");
 }
+
+

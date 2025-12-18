@@ -45,6 +45,7 @@ void soldier_idle (edict_t *self)
 {
 	if (random() > 0.8)
 		gi.sound (self, CHAN_VOICE, sound_idle, 1, ATTN_IDLE, 0);
+	strcpy(self->monsterinfo.state_name,"idle");
 }
 
 void soldier_cock (edict_t *self)
@@ -53,6 +54,7 @@ void soldier_cock (edict_t *self)
 		gi.sound (self, CHAN_WEAPON, sound_cock, 1, ATTN_IDLE, 0);
 	else
 		gi.sound (self, CHAN_WEAPON, sound_cock, 1, ATTN_NORM, 0);
+	strcpy(self->monsterinfo.state_name,"cock");
 }
 
 
@@ -214,6 +216,7 @@ void soldier_stand (edict_t *self)
 		self->monsterinfo.currentmove = &soldier_move_stand1;
 	else
 		self->monsterinfo.currentmove = &soldier_move_stand3;
+	strcpy(self->monsterinfo.state_name, "stand");
 }
 
 
@@ -225,6 +228,7 @@ void soldier_walk1_random (edict_t *self)
 {
 	if (random() > 0.1)
 		self->monsterinfo.nextframe = FRAME_walk101;
+	strcpy(self->monsterinfo.state_name, "walk");
 }
 
 mframe_t soldier_frames_walk1 [] =
@@ -286,6 +290,7 @@ void soldier_walk (edict_t *self)
 		self->monsterinfo.currentmove = &soldier_move_walk1;
 	else
 		self->monsterinfo.currentmove = &soldier_move_walk2;
+	strcpy(self->monsterinfo.state_name, "walk");
 }
 
 
@@ -331,6 +336,7 @@ void soldier_run (edict_t *self)
 	{
 		self->monsterinfo.currentmove = &soldier_move_start_run;
 	}
+	strcpy(self->monsterinfo.state_name,"run");
 }
 
 
@@ -448,6 +454,7 @@ void soldier_pain (edict_t *self, edict_t *other, float kick, int damage)
 		self->monsterinfo.currentmove = &soldier_move_pain2;
 	else
 		self->monsterinfo.currentmove = &soldier_move_pain3;
+	strcpy(self->monsterinfo.state_name, "pain");
 }
 
 
@@ -521,6 +528,7 @@ void soldier_fire (edict_t *self, int flash_number)
 		else
 			self->monsterinfo.aiflags |= AI_HOLD_FRAME;
 	}
+	strcpy(self->monsterinfo.state_name,"fire");
 }
 
 // ATTACK1 (blaster/shotgun)
@@ -640,6 +648,7 @@ void soldier_duck_down (edict_t *self)
 	self->takedamage = DAMAGE_YES;
 	self->monsterinfo.pausetime = level.time + 1;
 	gi.linkentity (self);
+	strcpy(self->monsterinfo.state_name,"duck");
 }
 
 void soldier_duck_up (edict_t *self)
@@ -648,6 +657,7 @@ void soldier_duck_up (edict_t *self)
 	self->maxs[2] += 32;
 	self->takedamage = DAMAGE_AIM;
 	gi.linkentity (self);
+	strcpy(self->monsterinfo.state_name,"duck");
 }
 
 void soldier_fire3 (edict_t *self)
@@ -782,6 +792,7 @@ void soldier_attack(edict_t *self)
 	{
 		self->monsterinfo.currentmove = &soldier_move_attack4;
 	}
+	strcpy(self->monsterinfo.state_name,"attack");
 }
 
 
@@ -801,6 +812,7 @@ void soldier_sight(edict_t *self, edict_t *other)
 		if (random() > 0.5)
 			self->monsterinfo.currentmove = &soldier_move_attack6;
 	}
+	strcpy(self->monsterinfo.state_name,"sight");
 }
 
 //
@@ -813,6 +825,7 @@ void soldier_duck_hold (edict_t *self)
 		self->monsterinfo.aiflags &= ~AI_HOLD_FRAME;
 	else
 		self->monsterinfo.aiflags |= AI_HOLD_FRAME;
+	strcpy(self->monsterinfo.state_name,"duck");
 }
 
 mframe_t soldier_frames_duck [] =
@@ -864,6 +877,7 @@ void soldier_dodge (edict_t *self, edict_t *attacker, float eta)
 	}
 
 	self->monsterinfo.currentmove = &soldier_move_attack3;
+	strcpy(self->monsterinfo.state_name,"duck");
 }
 
 
@@ -889,6 +903,7 @@ void soldier_dead (edict_t *self)
 	self->svflags |= SVF_DEADMONSTER;
 	self->nextthink = 0;
 	gi.linkentity (self);
+	strcpy(self->monsterinfo.state_name,"dead");
 }
 
 mframe_t soldier_frames_death1 [] =
@@ -1226,6 +1241,8 @@ void SP_monster_soldier_x (edict_t *self)
 	self->monsterinfo.sight = soldier_sight;
 
 	gi.linkentity (self);
+
+	strcpy(self->monsterinfo.state_name,"spawn");
 
 	self->monsterinfo.stand (self);
 

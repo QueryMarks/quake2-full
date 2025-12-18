@@ -1519,52 +1519,120 @@ void ClientDisconnect (edict_t *ent)
 
 	// send effect
 	gi.WriteByte (svc_muzzleflash);
-	gi.WriteShort (ent-g_edicts);
-	gi.WriteByte (MZ_LOGOUT);
-	gi.multicast (ent->s.origin, MULTICAST_PVS);
+	gi.WriteShort(ent - g_edicts);
+	gi.WriteByte(MZ_LOGOUT);
+	gi.multicast(ent->s.origin, MULTICAST_PVS);
 
-	gi.unlinkentity (ent);
+	gi.unlinkentity(ent);
 	ent->s.modelindex = 0;
 	ent->solid = SOLID_NOT;
 	ent->inuse = false;
 	ent->classname = "disconnected";
 	ent->client->pers.connected = false;
 
-	playernum = ent-g_edicts-1;
-	gi.configstring (CS_PLAYERSKINS+playernum, "");
+	playernum = ent - g_edicts - 1;
+	gi.configstring(CS_PLAYERSKINS + playernum, "");
 }
 
 
 //==============================================================
 
 
-edict_t	*pm_passent;
+edict_t* pm_passent;
 
 // pmove doesn't need to know about passent and contentmask
-trace_t	PM_trace (vec3_t start, vec3_t mins, vec3_t maxs, vec3_t end)
+trace_t	PM_trace(vec3_t start, vec3_t mins, vec3_t maxs, vec3_t end)
 {
 	if (pm_passent->health > 0)
-		return gi.trace (start, mins, maxs, end, pm_passent, MASK_PLAYERSOLID);
+		return gi.trace(start, mins, maxs, end, pm_passent, MASK_PLAYERSOLID);
 	else
-		return gi.trace (start, mins, maxs, end, pm_passent, MASK_DEADSOLID);
+		return gi.trace(start, mins, maxs, end, pm_passent, MASK_DEADSOLID);
 }
 
-unsigned CheckBlock (void *b, int c)
+unsigned CheckBlock(void* b, int c)
 {
-	int	v,i;
+	int	v, i;
 	v = 0;
-	for (i=0 ; i<c ; i++)
-		v+= ((byte *)b)[i];
+	for (i = 0; i < c; i++)
+		v += ((byte*)b)[i];
 	return v;
 }
-void PrintPmove (pmove_t *pm)
+void PrintPmove(pmove_t* pm)
 {
 	unsigned	c1, c2;
 
-	c1 = CheckBlock (&pm->s, sizeof(pm->s));
-	c2 = CheckBlock (&pm->cmd, sizeof(pm->cmd));
-	Com_Printf ("sv %3i:%i %i\n", pm->cmd.impulse, c1, c2);
+	c1 = CheckBlock(&pm->s, sizeof(pm->s));
+	c2 = CheckBlock(&pm->cmd, sizeof(pm->cmd));
+	Com_Printf("sv %3i:%i %i\n", pm->cmd.impulse, c1, c2);
 }
+
+//ETHELYN START
+void PsychicVision(edict_t* ent) {
+	// Uses a lot of radius damage stuff
+	float	points;
+	edict_t* ent2 = NULL;
+	vec3_t	v;
+	vec3_t	dir;
+	float radius = 200;
+	edict_t* ignore = ent;
+
+	vec3_t	start;
+	vec3_t	forward, right, up;
+	vec3_t	aim;
+	vec3_t	end;
+
+	AngleVectors(ent->client->v_angle, forward, right, up);
+	vec3_t offset;
+	VectorSet(offset, 24, 6, ent->viewheight - 7);
+	G_ProjectSource(ent->s.origin, offset, forward, right, start);
+	VectorNormalize(forward);
+
+	float necessary = 0.5f;
+
+	char name[500] = "";
+
+	int health = 0;
+
+	char state[500] = "do nothing";
+
+
+	while ((ent2 = findradius(ent2, ent->s.origin, radius)) != NULL)
+	{
+		vec3_t target;
+		VectorSubtract(ent2->s.origin, start, target);
+		VectorNormalize(target);
+		vec_t result = _DotProduct(target, forward);
+		if (result > necessary)
+		{
+			if (ent2 == ignore)
+				continue;
+			if (!ent2->takedamage)
+				continue;
+			ent->client->chosen = ent2;
+			necessary = result;
+			strcpy(name, ent2->classname);
+			health = ent2->health;
+			if (strlen(ent2->monsterinfo.state_name) > 0) {
+				strcpy(state, ent2->monsterinfo.state_name);
+			}
+
+		}
+
+	}
+		
+		/*if (strcmp(string2print, ent->client->psychic_vision_string) != 0) {
+			if (string2print != NULL)
+			{*/
+				//gi.configstring(CS_GENERAL+1, ent->client->psychic_vision_string);
+	if (strlen(name) > 0) {
+		gi.centerprintf(ent, "I'm %s.\nI've got %d health,\nand I love to %s.", name, health, state);//\n\"I'm %s.\n I have %d health.\"", ent->client->chosen->classname, ent->client->chosen->classname, ent->client->chosen->health);
+
+	}
+				/* }
+			ent->client->psychic_vision_string = string2print;
+		}*/
+}
+//ETHELYN END
 
 /*
 ==============
@@ -1749,7 +1817,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 			UpdateChaseCam(other);
 	}
 	//ETHELYN START
-	if (client->psychic_power < 999) {
+	if (client->psychic_power < 999 && !client->psychic_vision_enabled) {
 		client->psychic_power += 1;
 	}
 	if (client->floating > 0) {
@@ -1768,6 +1836,17 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		}
 	}
 	//ETHELYN END
+
+	if (client->psychic_vision_enabled) {
+		if (client->psychic_power > 0) {
+			PsychicVision(ent);
+			client->psychic_power -= 1;
+		}
+		else {
+			client->psychic_vision_enabled = false;
+			client->psychic_vision_string = "";
+		}
+	}
 }
 
 

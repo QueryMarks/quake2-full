@@ -710,7 +710,15 @@ char *single_statusbar =
 	"string \"PSYCHIC POWER:\" "
 	"xv 0 "
 	"num 3    18 "
-	"endif ";
+	"endif "
+//psychic vision
+"if 19 "
+	"xv 0 "
+	"yb -300 "
+	"string \"!!!!!PSYCHIC VISION ACTIVE!!!!!\" "
+	"yb -290 "
+	"string \"READING MINDS...\" "
+"endif ";
 //ETHELYN END
 
 char *dm_statusbar =

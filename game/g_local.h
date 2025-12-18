@@ -445,6 +445,8 @@ typedef struct
 
 	int			power_armor_type;
 	int			power_armor_power;
+
+	char		state_name[100];
 } monsterinfo_t;
 
 
@@ -968,6 +970,14 @@ struct gclient_s
 	edict_t* held_item;
 	int held_item_timer;
 	vec3_t held_item_position;
+
+	//psychic vision
+	
+	qboolean psychic_vision_enabled;
+	char* psychic_vision_string;
+	char* previous_string;
+	edict_t* chosen;
+
 	//ETHELYN END
 };
 
@@ -1119,5 +1129,10 @@ struct edict_s
 	// common data blocks
 	moveinfo_t		moveinfo;
 	monsterinfo_t	monsterinfo;
+
+	//ETHELYN START
+	//status effects. 0 = none. 1 = doom
+	int status_effect;
+	int doom_timer;
 };
 
