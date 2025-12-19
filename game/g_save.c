@@ -222,7 +222,7 @@ void InitGame (void)
 
 	//ETHELYN START
 	//Set up keybinds
-	gi.AddCommandString("bind h \"teleportbeam\"");
+	/*gi.AddCommandString("bind h \"teleportbeam\"");
 	gi.AddCommandString("bind m \"superjump\"");
 	gi.AddCommandString("bind n \"psychiclift\"");
 	gi.AddCommandString("bind j \"psychicpush\"");
@@ -231,7 +231,7 @@ void InitGame (void)
 	gi.AddCommandString("unbind l");
 	gi.AddCommandString("bind l psychicdash");
 	gi.AddCommandString("bind p psychicpull");
-	gi.dprintf("WE ARE DOING THE COMMANDS\n");
+	gi.dprintf("WE ARE DOING THE COMMANDS\n");*/
 	//ETHELYN END
 
 }
