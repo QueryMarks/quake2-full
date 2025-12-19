@@ -1,9 +1,9 @@
-### WELCOME to QUAKE 2: PSYCHIC POWERS.
+# WELCOME to QUAKE 2: PSYCHIC POWERS.
 
 This mod features 5 movement abilities, 5 utility abilities, updated weapons that inflict psychic statuses on enemies, and the ability to view your enemies' thoughts.
 
 
-### INSTALLATION
+# INSTALLATION
 
 Simply place the coolermod folder, containing gamex86.dll, into your Quake 2 install. Launch the game with the arguments "+set game coolermod"
 
@@ -11,7 +11,7 @@ Each psychic ability costs Psychic Power, which is displayed on screen and quick
 
 Each ability uses a console command which can be rebound. Aside from psychic vision, abilities that affect enemies require precise aim!
 
-### UTILITY ABILITIES:
+# UTILITY ABILITIES:
 
 ## Hold (psychichold, Default Key: y)
 Holds an enemy in place for a bit.
@@ -32,7 +32,7 @@ Pulls enemies in.
 Heals the player for up to 50 health.
 
 
-### MOVEMENT ABILITIES:
+# MOVEMENT ABILITIES:
 
 ## Float (psychicfloat, Default Key: f)
 Float upwards slowly for up to 5 seconds. Press again to cancel.
@@ -49,7 +49,7 @@ When first pressed, sets a warp location. Press again to swap to your warp locat
 ## Lunge (psychicdash, Default Key: l)
 A lunge forward with a burst of speed. Travels much farther in the air.
 
-### STATUSES:
+# STATUSES:
 This mod has 5 status effects that can be applied via weapons. Each enemy can only have 1 status at a time.
 
 ## Doomed:
@@ -68,7 +68,7 @@ Puts the enemy into a repeating pain state forever.
 Switches the enemy's gravity, sending them into the sky.
 
 
-### WEAPON CHANGES:
+# WEAPON CHANGES:
 
 ## Blaster:
 Fires a set of low-damage blaster bolts in an X. If an enemy gets hit, inflicts Doomed.
@@ -104,5 +104,5 @@ Travels much faster now. The extra lightning bolts inflict Headache.
 Fires 3 exploding ghosts... But they're too heavy to float. Sorry.
 
 
-### PSYCHIC VISION:
+# PSYCHIC VISION:
 Press the V key to enable PSYCHIC VISION. When close to an enemy, aim roughly towards them to view their thoughts, including name, health, and current state! You can also view the thoughts of damageable inanimate objects... They don't do much, but maybe it's helpful. The console command is psychicvision.
