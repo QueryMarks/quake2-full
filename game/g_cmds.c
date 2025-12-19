@@ -954,7 +954,6 @@ void Cmd_PsychicDash(edict_t* ent) {
 		vec3_t	end;
 
 		AngleVectors(ent->client->v_angle, forward, right, up);
-		gi.cprintf(ent, PRINT_HIGH, "Forward is %d %d %d", forward);
 		vec3_t forward2;
 		VectorMA(forward2, 200, forward, forward2);
 		VectorMA(ent->velocity, 2000, forward, ent->velocity);
@@ -1037,11 +1036,10 @@ void Cmd_PsychicPush(edict_t* ent)
 			trace_t tr;
 			tr = gi.trace(start, NULL, NULL, end, ent, MASK_SHOT);
 			if (tr.ent->takedamage) {
-				//gi.cprintf(ent, PRINT_HIGH, "IT TOOK DAMAGE\n");
-				tr.ent->velocity[0] = forward[0]*8192;
-				tr.ent->velocity[1] = forward[1]*8192;
-				tr.ent->velocity[2] = 100;
-				ent->client->psychic_power -= cost;
+				AngleVectors(ent->client->v_angle, forward, right, up);
+				VectorScale(forward, 2000, forward);
+				forward[2] = 200;
+				VectorCopy(forward, tr.ent->velocity);
 			}
 			else if (tr.ent != NULL) {
 				//Debug messages
@@ -1085,11 +1083,10 @@ void Cmd_PsychicPull(edict_t* ent)
 			trace_t tr;
 			tr = gi.trace(start, NULL, NULL, end, ent, MASK_SHOT);
 			if (tr.ent->takedamage) {
-				//gi.cprintf(ent, PRINT_HIGH, "IT TOOK DAMAGE\n");
-				tr.ent->velocity[0] = -forward[0];
-				tr.ent->velocity[1] = -forward[1];
-				tr.ent->velocity[2] = 100;
-				ent->client->psychic_power -= cost;
+				AngleVectors(ent->client->v_angle, forward, right, up);
+				VectorScale(forward, -2000, forward);
+				forward[2] = 200;
+				VectorCopy(forward, tr.ent->velocity);
 			}
 			else if (tr.ent != NULL) {
 				//Debug messages
@@ -1308,9 +1305,9 @@ void ClientCommand (edict_t *ent)
 	else if (Q_stricmp(cmd, "playerlist") == 0)
 		Cmd_PlayerList_f(ent);
 	//ETHELYN START
-	else if (Q_stricmp(cmd, "teleportbeam") == 0)
+	else if (Q_stricmp(cmd, "psychicswap") == 0)
 		Cmd_TeleportBeam_f(ent);
-	else if (Q_stricmp(cmd, "superjump") == 0)
+	else if (Q_stricmp(cmd, "psychicjump") == 0)
 		Cmd_Superjump(ent);
 	else if (Q_stricmp(cmd, "psychicdash") == 0)
 		Cmd_PsychicDash(ent);

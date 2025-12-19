@@ -448,13 +448,56 @@ void monster_think (edict_t *self)
 			Killed(self, self, self, 5000, self->s.origin);
 		}
 	}
+	//headache
 	else if (self->status_effect == 2) {
 		self->health -= 1;
-			if (self->health < 0) {
-				Killed(self, self, self, 1, self->s.origin);
-				gi.sound(self, CHAN_VOICE, gi.soundindex("weapons/grenlx1a.wav"), 1, ATTN_NORM, 0);
+		if (self->health <= 0) {
+			if (self->health == 0) {
+				gi.sound(self, CHAN_VOICE, gi.soundindex("bosshovr/bhvdeth1.wav"), 1, ATTN_NORM, 0);
 			}
+			Killed(self, self, self, 1, self->s.origin);
+		}
+		else
+		{
+			gi.sound(self, CHAN_VOICE, gi.soundindex("soldier/solpain1.wav"), 1, ATTN_NORM, 0);
+		}
 	}
+	//warp sickness
+	else if (self->status_effect == 3) {
+		if (self->doom_timer == 101) {
+			self->status_effect = 0;
+			self->doom_timer = 0;
+		}
+		else
+		{
+			if (self->doom_timer % 7 == 0) {
+				vec3_t warptoss;
+				for (int i = 0; i < 3; i++)
+				{
+					warptoss[i] = 2 * crandom() - 1;
+				}
+				VectorNormalize(warptoss);
+				vec_t scale;
+				scale = 1500;
+				VectorScale(warptoss, scale, warptoss);
+				warptoss[2] = 200;
+				VectorCopy(warptoss, self->velocity);
+			}
+			self->doom_timer += 1;
+		}
+
+	}
+	//stun, detailed in soldier and infantry behavior?
+	else if (self->status_effect == 4) {
+		self->monsterinfo.pausetime = 50000;
+	}
+	else if (self->status_effect == 5) {
+		self->gravity = -1;
+	}
+	if (self->status_effect != 5) {
+		self->gravity = 1;
+	}
+
 }
 
 

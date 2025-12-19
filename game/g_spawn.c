@@ -708,8 +708,8 @@ char *single_statusbar =
 	"xv -130 "
 	"yb -80 "
 	"string \"PSYCHIC POWER:\" "
-	"xv 0 "
-	"num 3    18 "
+	"xv 20 "
+	"num 4    18 "
 	"endif "
 //psychic vision
 "if 19 "

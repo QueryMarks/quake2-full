@@ -366,6 +366,18 @@ mframe_t soldier_frames_pain2 [] =
 };
 mmove_t soldier_move_pain2 = {FRAME_pain201, FRAME_pain207, soldier_frames_pain2, soldier_run};
 
+mframe_t soldier_frames_painstun[] =
+{
+	ai_move, -13, NULL,
+	ai_move, -1,  NULL,
+	ai_move, 2,   NULL,
+	ai_move, 4,   NULL,
+	ai_move, 2,   NULL,
+	ai_move, 3,   NULL,
+	ai_move, 2,   NULL
+};
+mmove_t soldier_move_painstun = { FRAME_pain201, FRAME_pain207, soldier_frames_pain2, soldier_run };
+
 mframe_t soldier_frames_pain3 [] =
 {
 	ai_move, -8, NULL,
@@ -412,49 +424,59 @@ mframe_t soldier_frames_pain4 [] =
 mmove_t soldier_move_pain4 = {FRAME_pain401, FRAME_pain417, soldier_frames_pain4, soldier_run};
 
 
-void soldier_pain (edict_t *self, edict_t *other, float kick, int damage)
+
+void soldier_pain(edict_t* self, edict_t* other, float kick, int damage)
 {
 	float	r;
 	int		n;
 
-	if (self->health < (self->max_health / 2))
+	if (self->status_effect == 4)
+	{
+		self->monsterinfo.currentmove = &soldier_move_painstun;
+		mmove_t soldier_move_painstun2 = { FRAME_pain201, FRAME_pain207, soldier_frames_pain2, soldier_pain };
+		soldier_move_painstun = soldier_move_painstun2;
+		strcpy(self->monsterinfo.state_name, "stun");
+	}
+	else
+	{
+		if (self->health < (self->max_health / 2))
 			self->s.skinnum |= 1;
 
-	if (level.time < self->pain_debounce_time)
-	{
-		if ((self->velocity[2] > 100) && ( (self->monsterinfo.currentmove == &soldier_move_pain1) || (self->monsterinfo.currentmove == &soldier_move_pain2) || (self->monsterinfo.currentmove == &soldier_move_pain3)))
+		if (level.time < self->pain_debounce_time)
+		{
+			if ((self->velocity[2] > 100) && ((self->monsterinfo.currentmove == &soldier_move_pain1) || (self->monsterinfo.currentmove == &soldier_move_pain2) || (self->monsterinfo.currentmove == &soldier_move_pain3)))
+				self->monsterinfo.currentmove = &soldier_move_pain4;
+			return;
+		}
+
+		self->pain_debounce_time = level.time + 3;
+
+		n = self->s.skinnum | 1;
+		if (n == 1)
+			gi.sound(self, CHAN_VOICE, sound_pain_light, 1, ATTN_NORM, 0);
+		else if (n == 3)
+			gi.sound(self, CHAN_VOICE, sound_pain, 1, ATTN_NORM, 0);
+		else
+			gi.sound(self, CHAN_VOICE, sound_pain_ss, 1, ATTN_NORM, 0);
+		if (self->velocity[2] > 100)
+		{
 			self->monsterinfo.currentmove = &soldier_move_pain4;
-		return;
+			return;
+		}
+
+		if (skill->value == 3)
+			return;		// no pain anims in nightmare
+
+		r = random();
+
+		if (r < 0.33)
+			self->monsterinfo.currentmove = &soldier_move_pain1;
+		else if (r < 0.66)
+			self->monsterinfo.currentmove = &soldier_move_pain2;
+		else
+			self->monsterinfo.currentmove = &soldier_move_pain3;
+		strcpy(self->monsterinfo.state_name, "pain");
 	}
-
-	self->pain_debounce_time = level.time + 3;
-
-	n = self->s.skinnum | 1;
-	if (n == 1)
-		gi.sound (self, CHAN_VOICE, sound_pain_light, 1, ATTN_NORM, 0);
-	else if (n == 3)
-		gi.sound (self, CHAN_VOICE, sound_pain, 1, ATTN_NORM, 0);
-	else
-		gi.sound (self, CHAN_VOICE, sound_pain_ss, 1, ATTN_NORM, 0);
-
-	if (self->velocity[2] > 100)
-	{
-		self->monsterinfo.currentmove = &soldier_move_pain4;
-		return;
-	}
-
-	if (skill->value == 3)
-		return;		// no pain anims in nightmare
-
-	r = random();
-
-	if (r < 0.33)
-		self->monsterinfo.currentmove = &soldier_move_pain1;
-	else if (r < 0.66)
-		self->monsterinfo.currentmove = &soldier_move_pain2;
-	else
-		self->monsterinfo.currentmove = &soldier_move_pain3;
-	strcpy(self->monsterinfo.state_name, "pain");
 }
 
 

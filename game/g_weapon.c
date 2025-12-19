@@ -222,12 +222,19 @@ static void fire_lead (edict_t *self, vec3_t start, vec3_t aimdir, int damage, i
 		{
 			if (tr.ent->takedamage)
 			{
-
+				if ((mod == MOD_MACHINEGUN || mod == MOD_CHAINGUN) && !(tr.ent->client)) {
+					gi.centerprintf(self, "%s was removed\nfrom this reality.", tr.ent->classname);
+					G_FreeEdict(tr.ent);
+				}
+				else 
+				{
+				
+				}
 				T_Damage (tr.ent, self, self, aimdir, tr.endpos, tr.plane.normal, damage, kick, DAMAGE_BULLET, mod);
 				//ETHELYN START
 				
-				tr.ent->groundentity = false;
-				tr.ent->gravity = -1;
+				tr.ent->velocity[2] = 5;
+				tr.ent->status_effect = 5;
 				//ETHELYN END
 
 			}
@@ -432,6 +439,7 @@ static void Grenade_Explode (edict_t *ent)
 		else
 			mod = MOD_GRENADE;
 		T_Damage (ent->enemy, ent, ent->owner, dir, ent->s.origin, vec3_origin, (int)points, (int)points, DAMAGE_RADIUS, mod);
+		ent->enemy->status_effect = 3;
 	}
 
 	if (ent->spawnflags & 2)
@@ -507,16 +515,16 @@ void fire_grenade (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int s
 	grenade = G_Spawn();
 	VectorCopy (start, grenade->s.origin);
 	VectorScale (aimdir, speed, grenade->velocity);
-	VectorMA (grenade->velocity, 200 + crandom() * 10.0, up, grenade->velocity);
-	VectorMA (grenade->velocity, crandom() * 10.0, right, grenade->velocity);
+	//VectorMA (grenade->velocity, 200 + crandom() * 10.0, up, grenade->velocity);
+	//VectorMA (grenade->velocity, crandom() * 10.0, right, grenade->velocity);
 	VectorSet (grenade->avelocity, 300, 300, 300);
-	grenade->movetype = MOVETYPE_BOUNCE;
+	grenade->movetype = MOVETYPE_FLY;
 	grenade->clipmask = MASK_SHOT;
 	grenade->solid = SOLID_BBOX;
 	grenade->s.effects |= EF_GRENADE;
 	VectorClear (grenade->mins);
 	VectorClear (grenade->maxs);
-	grenade->s.modelindex = gi.modelindex ("models/objects/grenade/tris.md2");
+	grenade->s.modelindex = gi.modelindex ("models/monsters/infantry/tris.md2");
 	grenade->owner = self;
 	grenade->touch = Grenade_Touch;
 	grenade->nextthink = level.time + timer;
@@ -549,7 +557,7 @@ void fire_grenade2 (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int 
 	grenade->s.effects |= EF_GRENADE;
 	VectorClear (grenade->mins);
 	VectorClear (grenade->maxs);
-	grenade->s.modelindex = gi.modelindex ("models/objects/grenade2/tris.md2");
+	grenade->s.modelindex = gi.modelindex ("models/monsters/infantry/tris.md2");
 	grenade->owner = self;
 	grenade->touch = Grenade_Touch;
 	grenade->nextthink = level.time + timer;
@@ -600,6 +608,7 @@ void rocket_touch (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *su
 
 	if (other->takedamage)
 	{
+		other->status_effect = 3;
 		T_Damage (other, ent, ent->owner, ent->velocity, ent->s.origin, plane->normal, ent->dmg, 0, 0, MOD_ROCKET);
 	}
 	else
@@ -698,7 +707,16 @@ void fire_rail (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick
 				ignore = NULL;
 
 			if ((tr.ent != self) && (tr.ent->takedamage))
-				T_Damage (tr.ent, self, self, aimdir, tr.endpos, tr.plane.normal, damage, kick, 0, MOD_RAILGUN);
+			{
+				tr.ent->status_effect = 4;
+				T_Damage(tr.ent, self, self, aimdir, tr.endpos, tr.plane.normal, damage, kick, 0, MOD_RAILGUN);
+				//ETHELYN START
+				
+				if (self->client) {
+					self->client->psychic_power += 500;
+				}
+			}
+				//ETHELYN END
 		}
 
 		VectorCopy (tr.endpos, from);
@@ -764,6 +782,8 @@ void bfg_explode (edict_t *self)
 			gi.WriteByte (TE_BFG_EXPLOSION);
 			gi.WritePosition (ent->s.origin);
 			gi.multicast (ent->s.origin, MULTICAST_PHS);
+			ent->status_effect = 2;
+			points = 1;
 			T_Damage (ent, self, self->owner, self->velocity, ent->s.origin, vec3_origin, (int)points, 0, DAMAGE_ENERGY, MOD_BFG_EFFECT);
 		}
 	}
@@ -790,7 +810,10 @@ void bfg_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf
 
 	// core explosion - prevents firing it into the wall/floor
 	if (other->takedamage)
-		T_Damage (other, self, self->owner, self->velocity, self->s.origin, plane->normal, 200, 0, 0, MOD_BFG_BLAST);
+	{
+		T_Damage(other, self, self->owner, self->velocity, self->s.origin, plane->normal, 200, 0, 0, MOD_BFG_BLAST);
+		other->status_effect = 2;
+	}
 	T_RadiusDamage(self, self->owner, 200, other, 100, MOD_BFG_BLAST);
 
 	gi.sound (self, CHAN_VOICE, gi.soundindex ("weapons/bfg__x1b.wav"), 1, ATTN_NORM, 0);
@@ -825,9 +848,9 @@ void bfg_think (edict_t *self)
 	trace_t	tr;
 
 	if (deathmatch->value)
-		dmg = 5;
+		dmg = 1;
 	else
-		dmg = 10;
+		dmg = 1;
 
 	ent = NULL;
 	while ((ent = findradius(ent, self->s.origin, 256)) != NULL)
@@ -861,6 +884,8 @@ void bfg_think (edict_t *self)
 
 			// hurt it if we can
 			if ((tr.ent->takedamage) && !(tr.ent->flags & FL_IMMUNE_LASER) && (tr.ent != self->owner))
+
+				tr.ent->status_effect = 2;
 				T_Damage (tr.ent, self, self->owner, dir, tr.endpos, vec3_origin, dmg, 1, DAMAGE_ENERGY, MOD_BFG_LASER);
 
 			// if we hit something that's not a monster or player we're done

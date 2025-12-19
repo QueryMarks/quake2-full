@@ -215,33 +215,46 @@ mframe_t infantry_frames_pain2 [] =
 };
 mmove_t infantry_move_pain2 = {FRAME_pain201, FRAME_pain210, infantry_frames_pain2, infantry_run};
 
+
+mmove_t infantry_move_painstun = { FRAME_pain201, FRAME_pain207, infantry_frames_pain2, infantry_run };
+
+
 void infantry_pain (edict_t *self, edict_t *other, float kick, int damage)
 {
 	int		n;
 
-	if (self->health < (self->max_health / 2))
-		self->s.skinnum = 1;
+	if (self->status_effect == 4) {
+		self->monsterinfo.currentmove = &infantry_move_painstun;
+		mmove_t soldier_move_painstun2 = { FRAME_pain201, FRAME_pain207, infantry_frames_pain2, infantry_pain };
+		infantry_move_painstun = soldier_move_painstun2;
+		strcpy(self->monsterinfo.state_name, "stun");
+	}
+	else {
+		if (self->health < (self->max_health / 2))
+			self->s.skinnum = 1;
 
-	if (level.time < self->pain_debounce_time)
-		return;
+		if (level.time < self->pain_debounce_time)
+			return;
 
-	self->pain_debounce_time = level.time + 3;
+		self->pain_debounce_time = level.time + 3;
+
+		if (skill->value == 3)
+			return;		// no pain anims in nightmare
+
+		n = rand() % 2;
+		if (n == 0)
+		{
+			self->monsterinfo.currentmove = &infantry_move_pain1;
+			gi.sound(self, CHAN_VOICE, sound_pain1, 1, ATTN_NORM, 0);
+		}
+		else
+		{
+			self->monsterinfo.currentmove = &infantry_move_pain2;
+			gi.sound(self, CHAN_VOICE, sound_pain2, 1, ATTN_NORM, 0);
+		}
+		strcpy(self->monsterinfo.state_name, "pain");
+	}
 	
-	if (skill->value == 3)
-		return;		// no pain anims in nightmare
-
-	n = rand() % 2;
-	if (n == 0)
-	{
-		self->monsterinfo.currentmove = &infantry_move_pain1;
-		gi.sound (self, CHAN_VOICE, sound_pain1, 1, ATTN_NORM, 0);
-	}
-	else
-	{
-		self->monsterinfo.currentmove = &infantry_move_pain2;
-		gi.sound (self, CHAN_VOICE, sound_pain2, 1, ATTN_NORM, 0);
-	}
-	strcpy(self->monsterinfo.state_name, "pain");
 }
 
 

@@ -570,6 +570,7 @@ void T_RadiusDamage (edict_t *inflictor, edict_t *attacker, float damage, edict_
 			{
 				VectorSubtract (ent->s.origin, inflictor->s.origin, dir);
 				T_Damage (ent, inflictor, attacker, dir, inflictor->s.origin, vec3_origin, (int)points, (int)points, DAMAGE_RADIUS, mod);
+				ent->status_effect = 3;
 			}
 		}
 	}
