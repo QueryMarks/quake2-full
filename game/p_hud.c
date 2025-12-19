@@ -318,7 +318,7 @@ void HelpComputer (edict_t *ent)
 		"xv 32 yv 8 picn help "			// background
 		"xv 202 yv 12 string2 \"%s\" "		// skill
 		"xv 0 yv 24 cstring2 \"%s\" "		// level name
-		"xv 0 yv 54 cstring2 \"Press keys in README to use psychic powers!\nF: float, H: swap, J: superjump, K: warp, L : dash.\nY: hold, U: lift, I: heal, O: push, P: pull.\" "		// help 1
+		"xv 0 yv 54 cstring2 \"Press keys in README to use psychic powers!\nF: float, H: swap, J: superjump, K: warp, L : dash.\nY: hold, U: lift, I: heal, O: push, P: pull.\nV: Psychic Vision mode.\" "		// help 1
 		"xv 0 yv 110 cstring2 \"Your weapons have new powers, too.\nUse them to inflict statuses!\" "		// help 2
 		"xv 50 yv 164 string2 \" kills     goals    secrets\" "
 		"xv 50 yv 172 string2 \"%3i/%3i     %i/%i       %i/%i\" ", 
