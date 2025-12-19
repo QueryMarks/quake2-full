@@ -1040,6 +1040,7 @@ void Cmd_PsychicPush(edict_t* ent)
 				VectorScale(forward, 2000, forward);
 				forward[2] = 200;
 				VectorCopy(forward, tr.ent->velocity);
+				ent->client->psychic_power -= cost;
 			}
 			else if (tr.ent != NULL) {
 				//Debug messages
@@ -1087,6 +1088,7 @@ void Cmd_PsychicPull(edict_t* ent)
 				VectorScale(forward, -2000, forward);
 				forward[2] = 200;
 				VectorCopy(forward, tr.ent->velocity);
+				ent->client->psychic_power -= cost;
 			}
 			else if (tr.ent != NULL) {
 				//Debug messages
